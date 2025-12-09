@@ -1,0 +1,42 @@
+.DocumentsWidget {
+  background-color: var(--sidebar);
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  grid-area: 1 / 1 / 2 / 3;
+}
+
+.documentList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+  padding: 10px;
+  height: 217px;
+  overflow: auto;
+  border-radius: 5px;
+  background: #09090b;
+}
+
+.documentItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  transition: 0.3s;
+  padding: 5px;
+  border-radius: 7px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--sidebar);
+  }
+}
+
+.widgetTitle {
+  font-size: 24px;
+}

@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "node-telegram-bot-api": "^0.66.0",
+	"@syncfusion/ej2-react-maps": "^28.2.6"
+  }
+}

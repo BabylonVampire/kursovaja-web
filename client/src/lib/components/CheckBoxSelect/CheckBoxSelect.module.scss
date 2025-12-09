@@ -1,0 +1,91 @@
+.checkBoxWrapper {
+  width: 50px;
+  height: 50px;
+  position: relative;
+}
+
+.checkBoxSelect {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  z-index: 2;
+  background-color: var(--secondary);
+  color: var(--primary);
+  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  margin: 0;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: 0.3s;
+  filter: brightness(1);
+
+  &:hover {
+    filter: brightness(2);
+  }
+
+  &Active {
+    filter: brightness(2) !important;
+  }
+}
+
+.selectList {
+  position: absolute;
+  z-index: 1;
+  height: 250px;
+  width: 250px;
+  left: 0;
+  border-radius: 7px;
+  background-color: var(--secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  overflow: auto;
+  align-content: flex-start;
+  top: -235px;
+  opacity: 0;
+  transition: 0.3s;
+  pointer-events: none;
+  box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.34);
+
+  &Active {
+    opacity: 1 !important;
+    top: -255px !important;
+    pointer-events: all !important;
+  }
+}
+
+.selectButton {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  background-color: var(--secondary);
+  color: var(--primary);
+  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  margin: 0;
+  padding: 0;
+  box-shadow: 0 4px 4px 2px rgb(0 0 0 / 34%);
+  cursor: pointer;
+  transition: 0.3s;
+  filter: brightness(1);
+
+  &:hover {
+    filter: brightness(2);
+  }
+
+  &Active {
+    filter: brightness(2) !important;
+  }
+}
+
+.selectItemLabel {
+  font-size: 12px;
+}

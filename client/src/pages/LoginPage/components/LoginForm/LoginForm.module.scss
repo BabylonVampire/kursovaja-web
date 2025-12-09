@@ -1,0 +1,27 @@
+.container {
+  max-width: 500px;
+  width: 100%;
+  background-color: var(--sidebar);
+  padding: 2rem;
+  border-radius: 8px;
+  border: solid 1px var(--border);
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loginForm {
+  width: 100%;
+}
+
+.form {
+  &Item {
+    justify-items: start;
+  }
+}
+
+.regButton {
+  margin-left: 5px;
+}

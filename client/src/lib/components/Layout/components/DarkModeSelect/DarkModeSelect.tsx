@@ -1,0 +1,41 @@
+import { Button } from '@/lib/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/lib/components/ui/dropdown-menu';
+import { useTheme } from '../ThemeProvider/ThemeProvider';
+import { Moon, Sun } from 'lucide-react';
+import { useLanguageStore } from '@/lib/store/useLanguageStore';
+import { messages } from '@/i18n';
+
+export const DarkModeSelect = () => {
+  const { setTheme } = useTheme();
+
+  const currentLanguage = useLanguageStore((state) => state.currentLanguage);
+  const textLines = messages[currentLanguage];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">{textLines.THEMES_MESSAGE}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme('light')}>
+          {textLines.THEMES_LIGHT}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>
+          {textLines.THEMES_DARK}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
+          {textLines.THEMES_SYSTEM}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
