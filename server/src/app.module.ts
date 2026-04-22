@@ -12,6 +12,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { DocumentModule } from './documents/document.module';
 import { Document } from './documents/models/document.model';
 import { FilesModule } from './files/files.module';
+import { TopicsModule } from './topics/topics.module';
+import { Topic } from './topics/entities/topic.entity';
+import { GroupsModule } from './groups/groups.module';
+import { Group } from './groups/entities/group.entity';
 
 @Module({
   imports: [
@@ -49,6 +53,8 @@ import { FilesModule } from './files/files.module';
     MailModule,
     FilesModule,
     DocumentModule,
+    TopicsModule,
+    GroupsModule,
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.DB_HOST,
@@ -56,7 +62,7 @@ import { FilesModule } from './files/files.module';
       username: process.env.DB_USERNAME,
       password: String(process.env.DB_PASSWORD),
       database: process.env.DB_DATABASE,
-      models: [User, Document],
+      models: [User, Document, Topic, Group],
       autoLoadModels: true,
       synchronize: true,
       logging: false,

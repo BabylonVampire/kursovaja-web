@@ -15,27 +15,25 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const PREFIX = import.meta.env.PREFIX ?? 'apiv1';
 
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error?.response?.status === 401 && !originalRequest?._retry) {
+      if (originalRequest?.url?.includes(`/${PREFIX}/auth/refresh`)) {
+        return Promise.reject(error);
+      }
       originalRequest._retry = true;
 
-      const PREFIX = import.meta.env.PREFIX ?? 'apiv1';
-
       try {
-        // Пытаемся обновить токен
-        const { data: response } = await axios.post(`/${PREFIX}/auth/refresh`, {});
+        const { data } = await api.post(`/${PREFIX}/auth/refresh`, {});
 
-        localStorage.setItem(ACCESS_TOKEN_KEY, response);
+        localStorage.setItem(ACCESS_TOKEN_KEY, data?.tokens?.accessToken || '');
 
-        // Обновляем заголовок Authorization и повторяем оригинальный запрос
-        originalRequest.headers.Authorization = `Bearer ${response}`;
+        originalRequest.headers.Authorization = `Bearer ${data?.tokens?.accessToken || ''}`;
 
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.clear();
-
         window.location.href = '/login';
-
         return Promise.reject(refreshError);
       }
     }

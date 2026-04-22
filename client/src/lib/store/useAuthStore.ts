@@ -1,5 +1,5 @@
 import { api } from '@/lib/api';
-import type { TAuthStore, TToken } from '@/lib/types';
+import type { TAuthResponse, TAuthStore } from '@/lib/types';
 import { ACCESS_TOKEN_KEY, USER_TOKEN_KEY } from '@/lib/constants';
 import { create } from 'zustand';
 
@@ -9,12 +9,15 @@ export const useAuthStore = create<TAuthStore>()((set) => ({
   isLoading: false,
   isError: false,
   userData: null,
+  setUserData: (userData) => set(() => ({ userData })),
   getTokens: async () => {
     const PREFIX = import.meta.env.PREFIX ?? 'apiv1';
 
-    const response = await api.post<TToken>(`/${PREFIX}/auth/refresh`, {});
+    const response = await api.post<TAuthResponse>(`/${PREFIX}/auth/refresh`, {});
 
-    localStorage.setItem(ACCESS_TOKEN_KEY, response?.data.accessToken || '');
+    localStorage.setItem(ACCESS_TOKEN_KEY, response?.data.tokens.accessToken || '');
+    localStorage.setItem(USER_TOKEN_KEY, JSON.stringify(response?.data.user || null));
+    set({ userData: response?.data.user || null });
   },
   login: async ({ email, password }: { email: string; password: string }) => {
     const PREFIX = import.meta.env.PREFIX ?? 'apiv1';
@@ -54,13 +57,15 @@ export const useAuthStore = create<TAuthStore>()((set) => ({
         window.location.href = '/login';
       });
   },
-  register: async ({ email, password }: { email: string; password: string }) => {
+  register: async ({ email, password, name, surname }) => {
     const PREFIX = import.meta.env.PREFIX ?? 'apiv1';
     set({ isLoading: true });
     const token = await api
       .post(`/${PREFIX}/auth/signUp`, {
         email,
         password,
+        name,
+        surname,
       })
       .catch(() => set({ isError: true }))
       .finally(() => set({ isLoading: false }));
@@ -76,5 +81,18 @@ export const useAuthStore = create<TAuthStore>()((set) => ({
     set({ userData: token?.data.user });
 
     return true;
+  },
+  updateProfile: async (payload) => {
+    const PREFIX = import.meta.env.PREFIX ?? 'apiv1';
+    const response = await api.patch(`/${PREFIX}/users/me`, payload).catch(() => null);
+
+    if (!response?.data) {
+      return null;
+    }
+
+    localStorage.setItem(USER_TOKEN_KEY, JSON.stringify(response.data));
+    set({ userData: response.data });
+
+    return response.data;
   },
 }));

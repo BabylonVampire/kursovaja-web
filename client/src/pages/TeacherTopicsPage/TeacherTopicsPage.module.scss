@@ -1,0 +1,69 @@
+.wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.card {
+  max-width: 700px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.createTopicControls {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.groupsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.selectedGroups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.topicsSection {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topicsTitle {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.topicCard {
+  width: 100%;
+}
+
+.topicContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupDetails {
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.groupSummary {
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 8px;
+}

@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './entities/user.entity';
+import { Op, WhereOptions } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -106,5 +107,22 @@ export class UsersService {
       console.error(error);
       throw new HttpException(`Ошибка при активации`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  async findAll(search?: string) {
+    const where: WhereOptions<User> | undefined = search
+      ? {
+          [Op.or]: [
+            { name: { [Op.iLike]: `%${search}%` } },
+            { surname: { [Op.iLike]: `%${search}%` } },
+          ],
+        }
+      : undefined;
+
+    return this.userRepository.findAll({
+      where,
+      attributes: { exclude: ['password', 'hashedRT'] },
+      order: [['createdAt', 'DESC']],
+    });
   }
 }

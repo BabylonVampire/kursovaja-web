@@ -1,3 +1,39 @@
 .sideBar {
   z-index: 10;
 }
+
+.sideBarHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appTitle {
+  font-weight: 600;
+}
+
+.userInfo {
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.userMeta {
+  font-size: 12px;
+  opacity: 0.85;
+  word-break: break-word;
+}
+
+.appVersion {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.75;
+}

@@ -6,8 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 export const AuthWrap: FC<PropsWithChildren> = ({ children }) => {
   const setIsAuthorized = useAuthStore((state) => state.setIsAuthorized);
+  const setUserData = useAuthStore((state) => state.setUserData);
   const getTokens = useAuthStore((state) => state.getTokens);
-  const isAuthorized = useAuthStore((state) => state.isAuthorized);
   const navigate = useNavigate();
   const location = useLocation();
   const isOnLoginPage = useMemo(() => location.pathname === `/${ERoutes.LOGIN}`, [location]);
@@ -29,6 +29,10 @@ export const AuthWrap: FC<PropsWithChildren> = ({ children }) => {
       if (!currentUser && !isOnLoginPage) {
         toLoginPage();
         return;
+      }
+
+      if (currentUser) {
+        setUserData(JSON.parse(currentUser));
       }
 
       await getTokens().catch((error) => {

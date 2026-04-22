@@ -1,0 +1,19 @@
+.wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.card {
+  max-width: 640px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.selectTrigger {
+  width: 100%;
+}

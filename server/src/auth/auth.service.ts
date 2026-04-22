@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from 'src/users/entities/user.entity';
 import { AuthDto } from './dto/';
 import * as bcrypt from 'bcrypt';
-import { LogoutResponse, Tokens } from './interfaces';
+import { JwtPayload, LogoutResponse, Tokens } from './interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { MailService } from 'src/mail/mail.service';
@@ -91,26 +91,28 @@ export class AuthService {
     }
   }
 
-  async refreshTokens(rt: string): Promise<Tokens | HttpException> {
+  async refreshTokens(rt: string): Promise<{ tokens: Tokens; user: User }> {
     try {
-      const user = await this.userRepository.findOne({
-        where: {
-          hashedRT: rt,
-        },
+      const payload = await this.JWTService.verifyAsync<JwtPayload>(rt, {
+        secret: process.env.JWT_REFRESH_KEY,
       });
+      const user = await this.userRepository.findByPk(payload.sub);
 
       if (!user || !user.hashedRT) {
-        return new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
       }
-      const rtMatches = bcrypt.compare(rt, user.hashedRT);
+      const rtMatches = await bcrypt.compare(rt, user.hashedRT);
       if (!rtMatches) {
-        return new HttpException('Указан неверный Refresh Token', HttpStatus.UNAUTHORIZED);
+        throw new HttpException('Указан неверный Refresh Token', HttpStatus.UNAUTHORIZED);
       }
       const tokens = await this.getTokens(user.id, user.email);
       await this.updateRTHash(user.id, tokens.refreshToken);
-      return tokens;
+      return { tokens, user };
     } catch (error) {
-      return new HttpException('Ошибка при получении токенов', HttpStatus.INTERNAL_SERVER_ERROR, {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Ошибка при получении токенов', HttpStatus.UNAUTHORIZED, {
         cause: error,
       });
     }

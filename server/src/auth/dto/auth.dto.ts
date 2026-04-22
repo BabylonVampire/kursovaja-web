@@ -13,4 +13,10 @@ export class AuthDto {
   @Length(6, 50)
   @ApiProperty({ description: 'Пароль пользователя', example: 'test12' })
   readonly password: string;
+
+  @ApiProperty({ description: 'Имя пользователя', example: 'Иван', required: false })
+  readonly name?: string;
+
+  @ApiProperty({ description: 'Фамилия пользователя', example: 'Иванов', required: false })
+  readonly surname?: string;
 }

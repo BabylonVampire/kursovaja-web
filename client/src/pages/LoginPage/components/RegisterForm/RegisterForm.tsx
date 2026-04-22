@@ -66,7 +66,12 @@ const RegisterForm: FC<TProps> = ({ setAuthMode }) => {
     setErrorMessage(null);
 
     try {
-      const response = await register({ password: values.password, email: values.email });
+      const response = await register({
+        password: values.password,
+        email: values.email,
+        name: values.name,
+        surname: values.surname,
+      });
 
       if (response) {
         setIsAuthorized(true);

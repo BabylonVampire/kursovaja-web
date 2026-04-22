@@ -29,6 +29,17 @@ export class AuthController {
     private userService: UsersService,
   ) {}
 
+  private getRefreshCookieOptions() {
+    return {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/',
+      domain: process.env.COOKIE_DOMAIN || undefined,
+    };
+  }
+
   @Public()
   @Post('signUp')
   @ApiOperation({ summary: 'Регистрация пользователя' })
@@ -47,8 +58,14 @@ export class AuthController {
   })
   signUpLocal(
     @Body() authDto: AuthDto,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<{ tokens: Tokens; user: User } | HttpException | undefined> {
-    return this.authService.signUpLocal(authDto);
+    return this.authService.signUpLocal(authDto).then((result) => {
+      if (result && !(result instanceof HttpException)) {
+        res.cookie('refreshToken', result.tokens.refreshToken, this.getRefreshCookieOptions());
+      }
+      return result;
+    });
   }
 
   @Public()
@@ -76,14 +93,7 @@ export class AuthController {
       throw result;
     }
 
-    res.cookie('refreshToken', result.tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
-      path: '/',
-      domain: process.env.COOKIE_DOMAIN || undefined,
-    });
+    res.cookie('refreshToken', result.tokens.refreshToken, this.getRefreshCookieOptions());
 
     return result;
   }
@@ -104,8 +114,12 @@ export class AuthController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Ошибка при выходе из системы',
   })
-  logout(@GetCurrentUserId() userId: string) {
-    return this.authService.logout(userId);
+  async logout(@GetCurrentUserId() userId: string, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.logout(userId);
+    if (!(result instanceof HttpException)) {
+      res.clearCookie('refreshToken', this.getRefreshCookieOptions());
+    }
+    return result;
   }
 
   @Public()
@@ -123,12 +137,17 @@ export class AuthController {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Ошибка при получении токенов',
   })
-  refreshTokens(@Cookies('refreshToken') refreshToken: string) {
+  async refreshTokens(
+    @Cookies('refreshToken') refreshToken: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found in cookies');
     }
 
-    return this.authService.refreshTokens(refreshToken);
+    const result = await this.authService.refreshTokens(refreshToken);
+    res.cookie('refreshToken', result.tokens.refreshToken, this.getRefreshCookieOptions());
+    return result;
   }
 
   @Public()

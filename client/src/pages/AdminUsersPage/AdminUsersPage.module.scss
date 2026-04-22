@@ -1,0 +1,24 @@
+.wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.card {
+  max-width: 1000px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.searchRow {
+  display: flex;
+  gap: 8px;
+}
+
+.roleSelect {
+  width: 140px;
+}
